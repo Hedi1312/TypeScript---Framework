@@ -1,29 +1,28 @@
 import axios from "axios";
-import { User } from "./User";
 
-export class Sync {
+interface HasId {
+    id?: string;
+}
 
 
-    constructor(public user: User){}
+export class Sync<P extends HasId> {
+
+
+    constructor(public rootUrl: string){}
     
-    fetch(){
-        axios.get(`http://localhost:3001/users/${this.user.get('id')}`)
-            .then(response => {
-                this.user.set(response.data)
-            })
+    fetch(id: string){
+        return axios.get(`${this.rootUrl}/${id}`);
     }
     
-    save() {
+    save(data: P) {
     
-        const id = this.user.get('id');
+        const {id} = data;
         if(id) { 
             // Mise a jour
-            axios.patch(`http://localhost:3001/users/${id}`, this.data);
+            return axios.patch(`${this.rootUrl}/${id}`, data);
         }
-        else{
-            //creation
-            axios.post('http://localhost:3001/users',this.data);
-        }
+        //creation
+        return axios.post(`${this.rootUrl}`, data);
     }
 
 

@@ -1,5 +1,6 @@
-import { Sync } from "./Sync";
-import { User } from "./User";
+
+import { Attributes } from "./Attributes";
+import { User, UserProps } from "./User";
 // const user = new User({name: 'Hedi', age: 22});
 // user.set({age: 35});
 // user.set({name: "Alice"});
@@ -26,8 +27,12 @@ import { User } from "./User";
 
 // postData();
 
-const user = new User({name: 'Hedi', age: 20});
-//ser.save();
+const attrbs = new Attributes<UserProps>({id: "5", name: "john", age: 32});
 
-const sync = new Sync(user);
-sync.test();
+const id = attrbs.get('id');
+const age = attrbs.get('age');
+
+
+// const user = new User({name: 'Hedi', age: 20});
+
+

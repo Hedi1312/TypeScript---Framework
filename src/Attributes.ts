@@ -1,14 +1,14 @@
-import { User } from "./User";
 
-export class Attributes {
+export class Attributes<P extends Object> {
     
-    constructor(public user: User){}
+    constructor(private data: P){}
 
-    get(propName: string): (string | number){
-        return this.user[propName];
+    get<K extends keyof P>(propName: K): P[K]{
+        return this.data[propName];
     }
 
-    set(updateData: Partial<UserProps>) :void{
+
+    set(updateData: Partial<P>) :void{
         Object.assign(this.data, updateData);
     }
 }
