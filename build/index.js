@@ -2728,6 +2728,73 @@
     }
   };
 
+  // src/user/UserList.ts
+  var UserList = class extends View {
+    constructor() {
+      super(...arguments);
+      this.onUserSelect = () => {
+        const select = this.parent.querySelector(".user-select");
+        if (select) {
+          const selectedUserId = select.value;
+          console.log(`Utilisateur s\xE9lectionn\xE9 : ${selectedUserId}`);
+          const users = this.loadUsers();
+          const selectedUser = users.find((user2) => user2.id === selectedUserId);
+          if (selectedUser) {
+            this.model.set({
+              id: selectedUser.id,
+              name: selectedUser.name,
+              age: selectedUser.age
+            });
+          }
+        }
+      };
+    }
+    eventsMap() {
+      return {
+        "change:.user-select": this.onUserSelect
+      };
+    }
+    loadUsers() {
+      let users = [];
+      const request = new XMLHttpRequest();
+      request.open("GET", "/api.json", false);
+      request.onload = function() {
+        if (request.status === 200) {
+          const data = JSON.parse(request.responseText);
+          if (Array.isArray(data.users)) {
+            users = data.users;
+          } else {
+            console.error("Erreur : user existe pas");
+          }
+        } else {
+          console.error("Erreur de chargement");
+        }
+      };
+      request.send();
+      return users;
+    }
+    template() {
+      const users = this.loadUsers();
+      if (!Array.isArray(users)) {
+        console.error("Les utilisateurs ne sont pas sous forme de tableau");
+        return `<div>Erreur : Impossible de charger les utilisateurs</div>`;
+      }
+      const options = users.map((user2) => {
+        const isSelected = this.model.get("id") === user2.id ? "selected" : "";
+        return `<option value="${user2.id}" ${isSelected}>${user2.name}</option>`;
+      }).join("");
+      return `
+        <div>
+            <h1>Liste des utilisateurs</h1>
+            <select class="user-select">
+                <option value="">Selectionner un utilisateur</option>
+                ${options}
+            </select>
+        </div>
+        `;
+    }
+  };
+
   // src/user/UserShow.ts
   var UserShow = class extends View {
     template() {
@@ -2746,18 +2813,21 @@
     regionsMap() {
       return {
         userShow: ".user-show",
-        userForm: ".user-form"
+        userForm: ".user-form",
+        userList: ".user-list"
       };
     }
     template() {
       return `
         <div>
+            <div class="user-list"></div>
             <div class="user-show"></div>
             <div class="user-form"></div>
         </div>
         `;
     }
     joinView() {
+      new UserList(this.regions.userList, this.model).render();
       new UserShow(this.regions.userShow, this.model).render();
       new UserForm(this.regions.userForm, this.model).render();
     }
