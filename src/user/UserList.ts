@@ -1,6 +1,5 @@
 import { View } from "../framework/View";
 import { User, UserProps } from "./User";
-import { UserShow } from "./UserShow";
 
 export class UserList extends View<User, UserProps> {
 
@@ -18,7 +17,7 @@ export class UserList extends View<User, UserProps> {
         if (select) {
             const selectedUserId = select.value;
             
-            console.log(`Utilisateur sélectionné : ${selectedUserId}`);
+            console.log(`Utilisateur selectionne : ${selectedUserId}`);
     
             const users = this.loadUsers();  
             const selectedUser = users.find(user => user.id === selectedUserId);
@@ -34,8 +33,6 @@ export class UserList extends View<User, UserProps> {
         }
     };
     
-    
-
    
     loadUsers(): UserProps[] {
         let users: UserProps[] = [];
